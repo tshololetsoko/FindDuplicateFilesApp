@@ -1,55 +1,61 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author TSHOLO LETSOKO
+ * March 2022
  */
 
-public class FindDuplicateFiles implements Callable {
+public class FindDuplicateFiles {
 
-    File [] rootFilePath;
+    File rootFilePath;
     ConcurrentHashMap<String, List<String>> map = new ConcurrentHashMap<>();
-    Vector <List< String >> res = new Vector <> ();
+    LinkedList <List< String >> resultSet = new LinkedList<>();
 
-    public FindDuplicateFiles(File [] rootFilePath) {
+    public FindDuplicateFiles(File rootFilePath) {
         this.rootFilePath = rootFilePath;
     }
-    public FindDuplicateFiles() {
 
-    }
+    public LinkedList<List<String>> findDuplicate(File[] paths) throws Exception{
+        for (File path : paths) {
+            if (path.isDirectory())
 
-    public Vector<List<String>> findDuplicate(String[] paths) {
-
-        for (String path : paths) {
-            String[] values = path.split(" ");
-            for (int i = 1; i < values.length; i++) {
+                findDuplicate(path.listFiles());
+            else {
+                String content = getFileContent(path);
                 //adding the path to the  content as the
-                List<String> list = map.getOrDefault(values[2], new ArrayList<String>());
-                list.add(values[0] + "/" + values[1]);
-                map.put(values[1], list);
+                List<String> list = map.getOrDefault(content, new LinkedList<>());
+                list.add(path.getAbsolutePath());
+                map.put(content, list);
             }
         }
-
         //to store the result list which is the absolute path of the file....
         for (String key : map.keySet()) {
             if (map.get(key).size() > 1) {
-                res.add(map.get(key));
+                resultSet.add(map.get(key));
+
             }
         }
-        return res;
+        return resultSet;
     }
 
-    @Override
-    public Object call() throws Exception {
-        Vector<List<String>> results;
+    public String getFileContent(File file) throws Exception{
+        BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
+        StringBuilder sbf = new StringBuilder();
+        String line;
 
-        ////File[] directories = rootFilePath.listFiles(File::isDirectory);
-
-       //results = findDuplicate(paths);
-
-        return true;
+        while ((line = reader.readLine()) != null) {
+            sbf.append(line);
+        }
+        reader.close();
+        return sbf.toString();
     }
+
 
 }

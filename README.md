@@ -1,0 +1,2 @@
+# FindDuplicateFilesApp
+FindDuplicateFilesApp

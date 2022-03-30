@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 public class CheckDuplicateFilesTest {
     private final static Logger log = Logger.getLogger("CheckDuplicateFilesTest");
-    DuplicateFilesFinder2 handler;
+    FindDuplicateFiles handler;
     File[] root;
 
     @Before
@@ -33,7 +33,7 @@ public class CheckDuplicateFilesTest {
             File[] directories = file.listFiles(File::isDirectory);
 
             for (File fileDir : directories){
-                Future futureThread = executorServiceThreadpool.submit(new DuplicateFilesFinder2(root));
+                Future futureThread = executorServiceThreadpool.submit(new FindDuplicateFiles(root));
                 futures.add(futureThread);
             }
 

@@ -7,22 +7,26 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author TSHOLO LETSOKO
  */
 
-public class DuplicateFilesFinder2 implements Callable {
+public class FindDuplicateFiles implements Callable {
 
     File [] rootFilePath;
+    ConcurrentHashMap<String, List<String>> map = new ConcurrentHashMap<>();
+    Vector <List< String >> res = new Vector <> ();
 
-    public DuplicateFilesFinder2(File [] rootFilePath) {
+    public FindDuplicateFiles(File [] rootFilePath) {
         this.rootFilePath = rootFilePath;
+    }
+    public FindDuplicateFiles() {
+
     }
 
     public Vector<List<String>> findDuplicate(String[] paths) {
-        ConcurrentHashMap<String, List<String>> map = new ConcurrentHashMap<>();
 
         for (String path : paths) {
             String[] values = path.split(" ");
             for (int i = 1; i < values.length; i++) {
-                String[] content = values[i].split("\\[]");
-                content[1] = content[1].replace("]", "");
+                String[] content = values[i].split("\\(");
+                content[1] = content[1].replace(")", "");
                 //adding the path to the  content as the
                 List<String> list = map.getOrDefault(content[1], new ArrayList<String>());
                 list.add(values[0] + "/" + content[0]);
@@ -31,7 +35,6 @@ public class DuplicateFilesFinder2 implements Callable {
         }
 
         //to store the result list which is the absolute path of the file....
-        Vector <List< String >> res = new Vector <> ();
         for (String key : map.keySet()) {
             if (map.get(key).size() > 1) {
                 res.add(map.get(key));
@@ -46,7 +49,7 @@ public class DuplicateFilesFinder2 implements Callable {
 
         ////File[] directories = rootFilePath.listFiles(File::isDirectory);
 
-       / results = findDuplicate(paths);
+       //results = findDuplicate(paths);
 
         return true;
     }

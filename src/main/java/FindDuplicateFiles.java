@@ -25,27 +25,24 @@ public class FindDuplicateFiles {
     public LinkedList<List<String>> findDuplicate(File[] paths) throws Exception{
         for (File path : paths) {
             if (path.isDirectory())
-
                 findDuplicate(path.listFiles());
             else {
-                String content = getFileContent(path);
+                String content = readFileContent(path);
                 //adding the path to the  content as the
                 List<String> list = map.getOrDefault(content, new LinkedList<>());
                 list.add(path.getAbsolutePath());
-                map.put(content, list);
-            }
-        }
-        //to store the result list which is the absolute path of the file....
-        for (String key : map.keySet()) {
-            if (map.get(key).size() > 1) {
-                resultSet.add(map.get(key));
 
+                map.put(content, list);
+                if (list.size() ==2) {
+                    resultSet.add(list); //reference object -if map is updated then list is also update
+                }
             }
         }
+
         return resultSet;
     }
 
-    public String getFileContent(File file) throws Exception{
+    public String readFileContent(File file) throws Exception{
         BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
         StringBuilder sbf = new StringBuilder();
         String line;
@@ -56,6 +53,5 @@ public class FindDuplicateFiles {
         reader.close();
         return sbf.toString();
     }
-
 
 }

@@ -14,18 +14,16 @@ public class FindDuplicateFileTest {
     private final static Logger log = Logger.getLogger("FindDuplicateFileNonThreadSolution");
     File root;
     @Before
-    public void setup() throws Exception {
-        //to find the system's root path
+    public void setup() {
         root = new File("C:\\Users\\OOL\\FindDuplicateFilesApp\\src\\test\\TestFiles\\");
     }
 
     @Test
     public void testDuplicateFilesFinder() throws Exception {
 
-        FindDuplicateFiles duplicateFilesFinder = new FindDuplicateFiles(root);
-        LinkedList<List<String>> findDuplicate =duplicateFilesFinder.findDuplicate(root.listFiles());
+        LinkedList<List<String>> findDuplicate =new FindDuplicateFiles().findDuplicate(root.listFiles());
 
-        System.out.println(findDuplicate);
+      // System.out.println(findDuplicate);
       for (List<String> currentBatch: findDuplicate){
             if (currentBatch.contains(root.getAbsolutePath() + "\\test4.txt"))
                 assertTrue(currentBatch.contains((root.getAbsolutePath() + "\\TestFiles2\\test2.txt")) &&

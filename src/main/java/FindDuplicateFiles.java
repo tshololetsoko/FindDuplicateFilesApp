@@ -15,33 +15,35 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FindDuplicateFiles {
 
     File rootFilePath;
-    ConcurrentHashMap<String, List<String>> map = new ConcurrentHashMap<>();
+
+    HashMap<String, List<String>> map = new HashMap<>();
     LinkedList <List< String >> resultSet = new LinkedList<>();
 
-    public FindDuplicateFiles(File rootFilePath) {
-        this.rootFilePath = rootFilePath;
+    public FindDuplicateFiles() {
     }
 
     public LinkedList<List<String>> findDuplicate(File[] paths) throws Exception{
         for (File path : paths) {
-            if (path.isDirectory())
+            if (path.isDirectory()) { //if the current file is a subfolder - do recursive
                 findDuplicate(path.listFiles());
-            else {
+            } else {
                 String content = readFileContent(path);
-                //adding the path to the  content as the
+                //content is used as the key in the map, value stored is the absolute path
                 List<String> list = map.getOrDefault(content, new LinkedList<>());
                 list.add(path.getAbsolutePath());
-
                 map.put(content, list);
+                // list is the reference object - if there are two list items, then we can update the duplicate list as well
                 if (list.size() ==2) {
-                    resultSet.add(list); //reference object -if map is updated then list is also update
+                    resultSet.add(list);
                 }
             }
         }
-
-        return resultSet;
+        return resultSet; //returning absolute paths where a duplicate file was found
     }
 
+
+
+    //read content of the file - used for comparison
     public String readFileContent(File file) throws Exception{
         BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
         StringBuilder sbf = new StringBuilder();
@@ -50,7 +52,7 @@ public class FindDuplicateFiles {
         while ((line = reader.readLine()) != null) {
             sbf.append(line);
         }
-        reader.close();
+        reader.close(); //need to close buffer
         return sbf.toString();
     }
 

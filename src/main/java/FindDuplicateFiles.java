@@ -25,12 +25,10 @@ public class FindDuplicateFiles implements Callable {
         for (String path : paths) {
             String[] values = path.split(" ");
             for (int i = 1; i < values.length; i++) {
-                String[] content = values[i].split("\\(");
-                content[1] = content[1].replace(")", "");
                 //adding the path to the  content as the
-                List<String> list = map.getOrDefault(content[1], new ArrayList<String>());
-                list.add(values[0] + "/" + content[0]);
-                map.put(content[1], list);
+                List<String> list = map.getOrDefault(values[2], new ArrayList<String>());
+                list.add(values[0] + "/" + values[1]);
+                map.put(values[1], list);
             }
         }
 

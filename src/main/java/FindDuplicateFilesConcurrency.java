@@ -38,7 +38,7 @@ public class FindDuplicateFilesConcurrency implements  Runnable{
     }
 
     public static Thread createSearchThread(File file){
-        Thread thread = new Thread(new FindDuplicateFilesConcurrency(file));
+        Thread thread = new Thread(new FindDuplicateFilesConcurrency(file));;
         thread.start();
         return thread;
     }
@@ -47,22 +47,23 @@ public class FindDuplicateFilesConcurrency implements  Runnable{
 
         File [] paths = rootFilePath.listFiles();
         for (File path : paths) {
+            if (path.isDirectory()) {
+                    createSearchThread(path);  //create a thread when path is a directory
+                    if (path.canRead() && path.()) {
+                        String content = readFileContent(path);
+                        //content is used as the key in the map, value stored is the absolute path
+                        ConcurrentLinkedQueue<String> list = map.getOrDefault(content, new ConcurrentLinkedQueue<>());
+                        list.add(path.getAbsolutePath());
+                        map.put(content, list);
+                        // list is the reference object - if there are two list items, then we can update the duplicate list as well
+                        if (list.size() == 2) {
+                            resultSet.add(list);
+                        }
 
-            if (path.canWrite()){
-                //if the current file is a subfolder - do recursive
-                createSearchThread(path);  //create a thread when path is a directory
-            } else {
-                String content = readFileContent(path);
-                //content is used as the key in the map, value stored is the absolute path
-                ConcurrentLinkedQueue<String> list = map.getOrDefault(content, new ConcurrentLinkedQueue<>());
-                list.add(path.getAbsolutePath());
-                map.put(content, list);
-                // list is the reference object - if there are two list items, then we can update the duplicate list as well
-                if (list.size() == 2) {
-                    resultSet.add(list);
+                    }
                 }
             }
-        }
+
     }
 
     //read content of the file - used for comparison
@@ -71,6 +72,7 @@ public class FindDuplicateFilesConcurrency implements  Runnable{
         StringBuilder sbf = new StringBuilder();
 
         try {
+
             reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
             String line;
 
@@ -94,9 +96,7 @@ public class FindDuplicateFilesConcurrency implements  Runnable{
         searchFileSystem();
         //print out the duplicates found in system
         for (ConcurrentLinkedQueue<String> resultSt : resultSet) {
-            for (String finalList : resultSt) {
-                System.out.println(finalList);
+                System.out.println(resultSt);
             }
         }
-    }
 }
